@@ -1,7 +1,7 @@
 package com.firmys.terminus.interceptors;
 
 import com.firmys.terminus.TerminusConstants;
-import com.firmys.terminus.annotations.ApiVersions;
+import com.firmys.terminus.annotations.ApiVersion;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -48,8 +48,8 @@ public class TerminusMvcInterceptor implements HandlerInterceptor {
             Annotation[] methodAnnotations = method.getAnnotations();
             System.out.println("Method Annotations:");
             for (Annotation annotation : methodAnnotations) {
-                if (annotation instanceof ApiVersions apiVersions) {
-                    if (Arrays.stream(apiVersions.allowed())
+                if (annotation instanceof ApiVersion apiVersion) {
+                    if (Arrays.stream(apiVersion.allowed())
                             .map(str -> str.toLowerCase(Locale.getDefault()))
                             .anyMatch(allowed -> Objects.equals(allowed, terminusVersion))) {
 
