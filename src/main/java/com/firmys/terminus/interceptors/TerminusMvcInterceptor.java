@@ -1,62 +1,54 @@
 package com.firmys.terminus.interceptors;
 
 import com.firmys.terminus.TerminusConstants;
-import com.firmys.terminus.annotations.ApiVersion;
+import com.firmys.terminus.TerminusVersionManager;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.lang.NonNull;
+import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.method.support.InvocableHandlerMethod;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.HandlerMapping;
+
+import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.Optional;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.lang.NonNull;
-import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.HandlerInterceptor;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Objects;
-
-@Component
-@ConditionalOnClass(org.springframework.web.servlet.DispatcherServlet.class)
 public class TerminusMvcInterceptor implements HandlerInterceptor {
+
+    private final TerminusVersionManager terminusVersionManager;
+
+    public TerminusMvcInterceptor(ApplicationContext applicationContext) {
+        terminusVersionManager = new TerminusVersionManager(applicationContext);
+    }
+
     @Override
     public boolean preHandle(
             @NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) {
-        return true;
-    }
 
-    private void handleAnnotations(
-            @NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) {
-        String terminusVersion = request.getHeader(TerminusConstants.TERMINUS_VERSION_HEADER);
-        if (handler instanceof HandlerMethod handlerMethod) {
-            // Get method and class
-            Method method = handlerMethod.getMethod();
-            Class<?> controllerClass = method.getDeclaringClass();
+        Integer endpointVersion = Optional.ofNullable(request.getHeader(TerminusConstants.TERMINUS_VERSION_HEADER))
+                .map(Integer::parseInt)
+                .orElseGet(terminusVersionManager::latestApiVersion);
 
-            // Get class annotations
-            Annotation[] classAnnotations = controllerClass.getAnnotations();
-            System.out.println("Class Annotations:");
-            for (Annotation annotation : classAnnotations) {
-                System.out.println(" - " + annotation.annotationType().getSimpleName());
-                if (annotation instanceof RestController restController) {
-                    System.out.println("   RestController value: " + restController.value());
-                }
-            }
+        if (handler instanceof HandlerMethod methodHandler) {
+            Map.Entry<Method, Object> methodObjectEntry = terminusVersionManager
+                    .getVersionedMethodBeanEntry(endpointVersion, methodHandler.getMethod());
+            InvocableHandlerMethod resolvedHandler = new InvocableHandlerMethod(
+                    methodObjectEntry.getValue(), methodObjectEntry.getKey());
 
-            // Get method annotations
-            Annotation[] methodAnnotations = method.getAnnotations();
-            System.out.println("Method Annotations:");
-            for (Annotation annotation : methodAnnotations) {
-                if (annotation instanceof ApiVersion apiVersion) {
-                    if (Arrays.stream(apiVersion.allowed())
-                            .map(str -> str.toLowerCase(Locale.getDefault()))
-                            .anyMatch(allowed -> Objects.equals(allowed, terminusVersion))) {
+            // The RequestMappingHandlerAdapter will configure the resolvedHandler
+            // with necessary argument resolvers and parameter name discoverer.
+            // Thus, manual copying is not needed here.
 
-                    }
-                }
-                System.out.println(" - " + annotation.annotationType().getSimpleName());
-            }
+            // Replace the handler in the current request attribute
+            request.setAttribute(
+                    // Qualify HandlerMapping
+                    HandlerMapping.BEST_MATCHING_HANDLER_ATTRIBUTE,
+                    resolvedHandler);
         }
+        return true;
     }
 }

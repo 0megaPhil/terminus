@@ -9,5 +9,4 @@ public class TerminusApplication {
     public static void main(String[] args) {
         SpringApplication.run(TerminusApplication.class, args);
     }
-
 }
