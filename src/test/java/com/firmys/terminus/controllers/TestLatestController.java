@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@ApiVersion(allowed = {1})
+@ApiVersion(versions = {1})
 public class TestLatestController {
 
     @GetMapping("/test")
