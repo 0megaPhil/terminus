@@ -1,6 +1,6 @@
 package com.firmys.terminus;
 
-import com.firmys.terminus.filters.RedirectFilter;
+import com.firmys.terminus.filters.TerminusVersionFilter;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,13 +24,13 @@ class TerminusApplicationTests {
     private WebApplicationContext context;
 
     @Autowired
-    private RedirectFilter redirectFilter;
+    private TerminusVersionFilter terminusVersionFilter;
 
     private MockMvc mockMvc;
 
     @BeforeEach
     public void setup() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(context).addFilter(redirectFilter).build();
+        mockMvc = MockMvcBuilders.webAppContextSetup(context).addFilter(terminusVersionFilter).build();
     }
 
     @Test

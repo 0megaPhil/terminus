@@ -18,12 +18,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
 
 @Component
-public class RedirectFilter implements Filter {
+public class TerminusVersionFilter implements Filter {
 
     private final ApplicationContext applicationContext;
     private final TerminusVersionManager versionManager;
 
-    public RedirectFilter(
+    public TerminusVersionFilter(
             ApplicationContext applicationContext, TerminusVersionManager versionManager) {
         this.applicationContext = applicationContext;
         this.versionManager = versionManager;
