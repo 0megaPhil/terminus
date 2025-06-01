@@ -7,3 +7,6 @@ springdoc:
     enabled: true
   swagger-ui:
     enabled: true
+
+terminus:
+  placeholder: /_terminus_${random.uuid}

@@ -9,28 +9,27 @@
         <version>3.5.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
+
     <groupId>com.firmys</groupId>
     <artifactId>terminus</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.1.0</version>
+
     <name>terminus</name>
     <description>terminus</description>
-    <url/>
-    <licenses>
-        <license/>
-    </licenses>
+
     <developers>
-        <developer/>
+        <developer>
+            <name>Phillip Platt</name>
+            <email>pplatt@firmys.com</email>
+            <organization>Firmys</organization>
+        </developer>
     </developers>
-    <scm>
-        <connection/>
-        <developerConnection/>
-        <tag/>
-        <url/>
-    </scm>
+
     <properties>
         <java.version>21</java.version>
         <springdoc-openapi-starter.version>2.6.0</springdoc-openapi-starter.version>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>

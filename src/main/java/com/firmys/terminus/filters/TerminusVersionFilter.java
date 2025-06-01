@@ -1,9 +1,7 @@
 package com.firmys.terminus.filters;
 
 import com.firmys.terminus.TerminusConstants;
-import com.firmys.terminus.TerminusVersionManager;
 
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -20,20 +18,9 @@ import jakarta.servlet.http.HttpServletRequestWrapper;
 @Component
 public class TerminusVersionFilter implements Filter {
 
-    private final ApplicationContext applicationContext;
-    private final TerminusVersionManager versionManager;
-
-    public TerminusVersionFilter(
-            ApplicationContext applicationContext, TerminusVersionManager versionManager) {
-        this.applicationContext = applicationContext;
-        this.versionManager = versionManager;
-    }
-
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-
-        versionManager.initialize(applicationContext);
 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
 
@@ -78,18 +65,13 @@ public class TerminusVersionFilter implements Filter {
     }
 
     private boolean shouldUseVersionedUri(HttpServletRequest request) {
-        Integer endpointVersion = Optional.ofNullable(
-                        request.getHeader(TerminusConstants.TERMINUS_VERSION_HEADER))
-                .map(Integer::parseInt)
-                .orElseGet(versionManager::latestApiVersion);
-        return endpointVersion != versionManager.latestApiVersion(); // Example
+        return request.getHeader(TerminusConstants.TERMINUS_VERSION_HEADER) != null;
     }
 
     private String buildVersionedUri(HttpServletRequest request) {
-        Integer endpointVersion = Optional.ofNullable(
+        String endpointVersion = Optional.ofNullable(
                         request.getHeader(TerminusConstants.TERMINUS_VERSION_HEADER))
-                .map(Integer::parseInt)
-                .orElseGet(versionManager::latestApiVersion);
-        return "/" + endpointVersion + request.getRequestURI(); // Example
+                .orElse("");
+        return "/" + endpointVersion + request.getRequestURI();
     }
 }

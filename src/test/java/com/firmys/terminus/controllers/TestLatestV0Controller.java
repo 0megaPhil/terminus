@@ -1,16 +1,15 @@
 package com.firmys.terminus.controllers;
 
-import com.firmys.terminus.annotations.ApiVersion;
+import com.firmys.terminus.annotations.Terminus;
+import com.firmys.terminus.annotations.TerminusMapping;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMethod;
 
-@RestController
-@ApiVersion(versions = {0})
+@Terminus(versions = {"0", "1", "2"})
 public class TestLatestV0Controller {
 
-    @GetMapping("/0/test")
+    @TerminusMapping(value = "/test", method = RequestMethod.GET)
     public String test() {
-        return "old version";
+        return "versions 0, 1, 2";
     }
 }
