@@ -6,7 +6,7 @@ redirection by header `X-Terminus-Version`.
 ## Overview
 
 Terminus is a Java-based web application built with **Spring Boot 3.5.0**,
-supporting **Spring MVC** for traditional web services and **WebFlux** (incoming).
+supporting **Spring MVC** for traditional web services and **WebFlux** (incoming soon).
 It includes OpenAPI documentation powered by **SpringDoc**.
 
 ## Technical Stack
