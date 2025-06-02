@@ -41,53 +41,53 @@ public class LatestController {
 
 ### Versioned Endpoint Controllers
 
+#### Call Endpoint for Version 1.1
 ```java
 import com.firmys.terminus.annotations.Terminus;
 import com.firmys.terminus.annotations.TerminusMapping;
 
-@Terminus(versions = {"0"})
-public class V0Controller {
+@Terminus(versions = {"1.1"})
+public class V11Controller {
 
    @TerminusMapping(value = "/endpoint", method = RequestMethod.GET)
    public String endpoint() {
-      return "version '0' endpoint";
+      return "version '1.1' endpoint";
    }
 }
 ```
 
-#### Call Endpoint V0
 ```java
 RestClient restClient = RestClient.create();
 
 String response = restClient.get()
     .uri("http://localhost:8080/endpoint")
-    .header("X-Terminus-Version", "0")
+    .header("X-Terminus-Version", "1.1")
     .retrieve()
     .body(String.class);
 
 ```
 
+#### Call Endpoint for Version 1.2 - 1.3 ('1.2' for header value)
 ```java
 import com.firmys.terminus.annotations.Terminus;
 import com.firmys.terminus.annotations.TerminusMapping;
 
-@Terminus(versions = {"1"})
-public class V1Controller {
+@Terminus(versions = {"1.2", "1.3"})
+public class V12Controller {
 
    @TerminusMapping(value = "/endpoint", method = RequestMethod.GET)
    public String endpoint() {
-      return "version '1' endpoint";
+      return "version '1.2' or `1.3` endpoint";
    }
 }
 ```
 
-#### Call Endpoint V1
 ```java
 RestClient restClient = RestClient.create();
 
 String response = restClient.get()
     .uri("http://localhost:8080/endpoint")
-    .header("X-Terminus-Version", "1")
+    .header("X-Terminus-Version", "1.2")
     .retrieve()
     .body(String.class);
 
