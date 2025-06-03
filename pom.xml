@@ -7,20 +7,23 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.5.0</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/>
     </parent>
 
     <groupId>com.firmys</groupId>
     <artifactId>terminus</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.2-SNAPSHOT</version>
 
     <name>terminus</name>
     <description>terminus</description>
 
     <distributionManagement>
+        <snapshotRepository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/0megaPhil/terminus</url>
+        </snapshotRepository>
         <repository>
             <id>github</id>
-            <name>GitHub Packages</name>
             <url>https://maven.pkg.github.com/0megaPhil/terminus</url>
         </repository>
     </distributionManagement>
@@ -81,5 +84,15 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>2.16.2</version>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
