@@ -97,17 +97,12 @@ String response = restClient.get()
 
 1. **Clone the repository**:
    ```bash
-   git clone [repository-url]
+   git clone git@github.com:0megaPhil/terminus.git
    ```
 
 2. **Build the project**:
    ```bash
    ./mvnw clean install
-   ```
-
-3. **Run the application**:
-   ```bash
-   ./mvnw spring-boot:run
    ```
 
 ## API Documentation
@@ -132,20 +127,6 @@ terminus/
 ├── .gitignore             # Git ignore patterns
 ├── mvnw                   # Maven wrapper (Unix/macOS)
 └── mvnw.cmd               # Maven wrapper (Windows)
-```
-
-## Building
-
-The project uses **Maven** with an included wrapper for dependency management and builds:
-
-**Unix/Linux/macOS**:
-```bash
-./mvnw clean install
-```
-
-**Windows**:
-```bash
-mvnw.cmd clean install
 ```
 
 ## Contributing

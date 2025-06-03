@@ -4,8 +4,12 @@ import com.firmys.terminus.annotations.Terminus;
 import com.firmys.terminus.annotations.TerminusMapping;
 
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
@@ -39,7 +43,10 @@ import java.util.Map;
  * for each version specified in a {@link Terminus} annotation.</li>
  */
 @Component
-class TerminusHandlerMapping extends RequestMappingHandlerMapping implements InitializingBean {
+@ConditionalOnClass(WebMvcConfigurer.class)
+@ConditionalOnMissingBean(TerminusMvcHandlerMapping.class)
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
+public class TerminusMvcHandlerMapping extends RequestMappingHandlerMapping implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
@@ -76,7 +83,7 @@ class TerminusHandlerMapping extends RequestMappingHandlerMapping implements Ini
 
         // Get the paths from TerminusMapping at method level
         String[] methodPaths = Arrays.stream(
-                entry.getValue().getMethod().getAnnotationsByType(TerminusMapping.class))
+                        entry.getValue().getMethod().getAnnotationsByType(TerminusMapping.class))
                 .findFirst()
                 .map(mapping ->
                         mapping.value().length > 0

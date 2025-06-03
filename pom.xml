@@ -3,16 +3,19 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.0</version>
-        <relativePath/>
-    </parent>
 
     <groupId>com.firmys</groupId>
     <artifactId>terminus</artifactId>
     <version>v0.1.3-SNAPSHOT</version>
+
+    <properties>
+        <java.version>21</java.version>
+
+        <!-- override to match parent version -->
+        <spring-boot-starter-parent.version>3.5.0</spring-boot-starter-parent.version>
+        <springdoc-openapi-starter.version>2.6.0</springdoc-openapi-starter.version>
+        <versions-maven-plugin.version>2.16.2</versions-maven-plugin.version>
+    </properties>
 
     <name>terminus</name>
     <description>terminus</description>
@@ -46,12 +49,20 @@
         </developer>
     </developers>
 
-    <properties>
-        <java.version>21</java.version>
-        <springdoc-openapi-starter.version>2.6.0</springdoc-openapi-starter.version>
-    </properties>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot-starter-parent.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
@@ -60,11 +71,13 @@
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>${springdoc-openapi-starter.version}</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webflux-ui</artifactId>
             <version>${springdoc-openapi-starter.version}</version>
+            <optional>true</optional>
         </dependency>
 
         <dependency>
@@ -90,7 +103,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
-                <version>2.16.2</version>
+                <version>${versions-maven-plugin.version}</version>
             </plugin>
         </plugins>
     </build>

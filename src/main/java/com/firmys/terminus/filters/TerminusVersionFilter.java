@@ -2,7 +2,10 @@ package com.firmys.terminus.filters;
 
 import com.firmys.terminus.TerminusConstants;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -16,47 +19,38 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
 
 /**
- * TerminusVersionFilter is a Spring-managed component that implements the {@link Filter} interface.
- * This filter is responsible for dynamically modifying request URIs by prefixing them with a version
- * identifier retrieved from a specific HTTP header. It allows version-specific routing of incoming
- * requests in a web application.
+ * TerminusVersionFilter is a web filter component that modifies incoming HTTP requests based on
+ * a custom version header. It intercepts requests, checks for the presence of a specific header,
+ * and dynamically alters the request URI and request path if the header is found.
  * <p>
- * Functionality:
- * <li> Intercepts incoming HTTP requests.
- * <li> Checks if the request contains a version identifier in the header specified by
- * {@code TerminusConstants.TERMINUS_VERSION_HEADER}.
- * <li> If a version identifier is present, it rewrites the request URI to include the version as a
- * prefix. For example, a request to `/example` with version `1` becomes `/1/example`.
- * <li> Passes the updated or original request down the filter chain for further processing.
+ * This filter helps route versioned API requests by appending the version specified in the
+ * "X-Terminus-Version" header to the request URI.
  * <p>
- * Key Methods:
- * <li> {@link #doFilter(ServletRequest, ServletResponse, FilterChain)}: Core method that performs
- * the filtering and URI modification logic.
- * <li> {@code shouldUseVersionedUri(HttpServletRequest)}: Determines if the request URI needs to be
- * prefixed with a version based on the presence of a version header.
- * <li> {@code buildVersionedUri(HttpServletRequest)}: Constructs the versioned URI by combining
- * the version identifier and the original request URI.
- * <p>
- * Integration:
- * This filter works seamlessly with components like `TerminusHandlerMapping` to ensure
- * dynamic request routing to specific endpoints based on version information. It is configured as
- * a Spring component for automatic inclusion in the filter chain via dependency injection.
- * <p>
- * Advantages:
- * <li> Provides a simple mechanism for handling versioned APIs.
- * <li> Decouples URI manipulation logic from controller-level concerns.
- * <li> Ensures request routing is consistent and extensible for multi-versioned applications.
- * <p>
- * Usage Context:
- * Typically used in applications that support API versioning, especially where version information
- * is specified in headers rather than directly in the request path.
- * <p>
- * Related Components:
- * <li> {@code TerminusConstants}: Defines the constants used for identifying the HTTP header that
- * specifies the version.
- * <li> {@code TerminusHandlerMapping}: Handles dynamic request mapping for versioned endpoints.
+ * An example scenario includes handling requests to differentiate API versions and route them
+ * appropriately without altering the top-level server-side configurations.
+ * <pre>
+ * The filter operates as follows:
+ * 1. Checks if the incoming request contains the "X-Terminus-Version" header.
+ * 2. If present, constructs a new URI by appending the specified version and the original request path.
+ * 3. Wraps and modifies the request to use the newly constructed versioned URI.
+ * 4. Passes the modified request along the filter chain.
+ * 5. If the header is not found, passes the original request as-is along the filter chain.
+ *
+ * This filter is automatically included when the application is running in a servlet-based
+ * web environment. It is made conditional on the presence of WebMvcConfigurer and servlet-based
+ * web applications.
+ *
+ * Dependencies:
+ * - The component requires the use of `TerminusConstants.TERMINUS_VERSION_HEADER`, which defines
+ * the header key ("X-Terminus-Version") that the filter checks for version information.
+ * </pre>
+ * An important design consideration for this class is ensuring that non-versioned requests are
+ * unaffected and routed normally. Versioned requests are transparently modified to include the
+ * version information in their URI.
  */
 @Component
+@ConditionalOnClass(WebMvcConfigurer.class)
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 public class TerminusVersionFilter implements Filter {
 
     @Override
