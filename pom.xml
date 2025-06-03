@@ -12,7 +12,7 @@
 
     <groupId>com.firmys</groupId>
     <artifactId>terminus</artifactId>
-    <version>0.1.2-SNAPSHOT</version>
+    <version>v0.1.2-SNAPSHOT</version>
 
     <name>terminus</name>
     <description>terminus</description>
